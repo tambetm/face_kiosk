@@ -1,0 +1,1 @@
+python kiosk.py --image_size 64 --images_path=../LFW/lfw_resized --mean_file=lfw/lfw+wlf_train_mean.binaryproto --data_file=lfw/lfw_all.csv --index_file=lfw/lfw_all.pkl --model_file=lfw/lfw_features.prototxt --pretrained_file=lfw/lfw+wlf_iter_130000.caffemodel
