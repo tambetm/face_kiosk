@@ -68,8 +68,8 @@ finder = FaceFinder(args.index_file, args.data_file)
 
 # initialize video capture
 video = cv2.VideoCapture(0)
-frame_width = video.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH)
-frame_height = video.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT)
+frame_width = int(video.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH))
+frame_height = int(video.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT))
 
 # initialize canvas
 canvas = np.empty((args.canvas_height, args.canvas_width, 3), dtype=np.uint8)
