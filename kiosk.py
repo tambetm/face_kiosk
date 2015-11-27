@@ -8,6 +8,7 @@ from detector import *
 from finder import *
 
 parser = argparse.ArgumentParser()
+parser.add_argument("--capture_device", type=int, default=0)
 parser.add_argument("--delay", type=int, default=1)
 parser.add_argument("--canvas_width", type=int, default=1024)
 parser.add_argument("--canvas_height", type=int, default=768)
@@ -18,31 +19,24 @@ parser.add_argument("--font_scale", type=float, default=0.5)
 parser.add_argument("--font_thickness", type=int, default=1)
 parser.add_argument("--show_name", type=int, default=1)
 parser.add_argument("--show_distance", type=int, default=1)
-parser.add_argument("--group_by", choices=["file", "name"], default="file")
+parser.add_argument("--group_by", choices=["file", "name"], default="name")
 
-parser.add_argument("--image_size", type=int, default=64)
-parser.add_argument("--face_min_size", type=int, default=100)
+parser.add_argument("--image_size", type=int, default=100)
+parser.add_argument("--face_min_size", type=int, default=50)
 parser.add_argument("--min_neighbors", type=int, default=10)
-parser.add_argument("--enlarge_factor", type=float, default=1.4)
+parser.add_argument("--enlarge_factor", type=float, default=2.2)
 parser.add_argument("--average_window", type=int, default=10)
 parser.add_argument("--oversample", type=int, default=0)
 parser.add_argument("--grayscale", type=int, default=1)
 
 parser.add_argument("--images_path", default="../LFW/lfw_resized")
-parser.add_argument("--mean_file", default="lfw/lfw+wlf_train_mean.binaryproto")
-parser.add_argument("--data_file", default="lfw/lfw_all.csv")
-parser.add_argument("--index_file", default="lfw/lfw_all.pkl")
-parser.add_argument("--model_file", default="lfw/lfw_features.prototxt")
-parser.add_argument("--pretrained_file", default="lfw/lfw+wlf_iter_130000.caffemodel")
-'''
-parser.add_argument("--images_path", default="../Fotis/isikud_koik_reviewed")
-parser.add_argument("--mean_file", default="fotis/lfw+wlf+fotis_train_mean.binaryproto")
-parser.add_argument("--data_file", default="fotis/fotis_unlabeled.csv")
-parser.add_argument("--index_file", default="fotis/fotis_unlabeled.pkl")
-parser.add_argument("--model_file", default="fotis/fotis_features.prototxt")
-parser.add_argument("--pretrained_file", default="fotis/lfw+wlf+fotis_iter_110000.caffemodel")
-'''
-parser.add_argument("--layer", default="ip1")
+parser.add_argument("--mean_file", default="CASIA_lfw/CASIA_train_mean.binaryproto")
+parser.add_argument("--data_file", default="CASIA_lfw/CASIA_lfw_oversample.csv")
+parser.add_argument("--index_file", default="CASIA_lfw/CASIA_lfw_oversample.pkl")
+parser.add_argument("--model_file", default="CASIA_lfw/CASIA_features.prototxt")
+parser.add_argument("--pretrained_file", default="CASIA_lfw/CASIA_iter_450000.caffemodel")
+parser.add_argument("--layer", default="pool5")
+
 parser.add_argument("--backend", choices=["gpu", "cpu"], default="cpu")
 args = parser.parse_args()
 
@@ -68,7 +62,7 @@ extractor = FaceFeaturesExtractor(
 finder = FaceFinder(args.index_file, args.data_file)
 
 # initialize video capture
-video = cv2.VideoCapture(0)
+video = cv2.VideoCapture(args.capture_device)
 frame_width = int(video.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH))
 frame_height = int(video.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT))
 
@@ -91,10 +85,8 @@ face_top = int(2 * frame_top + frame_height)
 
 text_top = int(face_top + args.face_size + text_height + 5)
 
-#feature_size = extractor.get_feature_size()
-#features = np.empty((args.average_window, feature_size))
 results = []
-i = 0
+n = 0
 while True:
   # capture frame
   ret, frame = video.read()
@@ -115,44 +107,48 @@ while True:
 
     # extract features of the face
     myface = frame[y:y+h,x:x+w,:]
-    #features[i, :] = extractor.get_image_features(myface)
     features = extractor.get_image_features(myface)
 
-    # find nearest images and add to the list
+    # find nearest images
     results += finder.find_nearest_faces(features)
 
-    # after average_window steps count the occurrences
-    i = (i + 1) % args.average_window
-    if i == 0:
-      # find nearest images
-      #results = finder.find_nearest_faces(features.mean(0))
-
-      # create dictionary for counting the occurrences
-      d = dict()
+    # after every average_window steps average predictions
+    n = (n + 1) % args.average_window
+    if n == 0:
+      # create dictionary with list of results in each group
+      groups = dict()
       for res in results:
-        d.setdefault(res[args.group_by], []).append(res)
-      d_sorted_keys = sorted(d, key=lambda k: len(d[k]), reverse=True)
-      results = []
+        groups.setdefault(res[args.group_by], []).append(res)
+
+      # calculate average distance for each group
+      distances = dict()
+      for k, group in groups.iteritems():
+        # only those groups which are present more than half time
+        if len(group) > args.average_window / 2:
+          # calculate average distance
+          distances[k] = float(sum(res['distance'] for res in group) / len(group))
+
+      # order groups by average distance
+      ordered_groups = sorted(distances, key=distances.get)
+
+      # keep only face_count top groups (by distance)
+      top_groups = ordered_groups[:args.face_count]
 
       # erase previous faces and texts
       canvas[face_top:].fill(255)
 
-      # loop over first face_count faces, that occurred most often
-      #for j, res in enumerate(results):
-      for j, k in enumerate(d_sorted_keys[:args.face_count]):
-        # sort the results for this file/name by distance
-        res2 = d[k]
-        res3 = sorted(res2, key=lambda r: r["distance"])
-        # show the image with smallest distance
-        res = res3[0]
+      # loop over top face groups
+      for i, k in enumerate(top_groups):
+        group = groups[k]
+        res = group[0]
 
         # read the face image
-        fullname = os.path.join(args.images_path, res['file'])
-        face = cv2.imread(fullname)
+        filename = os.path.join(args.images_path, res['file'])
+        face = cv2.imread(filename)
         
         # draw the face
         face = cv2.resize(face, (args.face_size, args.face_size))
-        face_left = face_gap + j * (face_gap + args.face_size)
+        face_left = face_gap + i * (face_gap + args.face_size)
         canvas[face_top:face_top+args.face_size,face_left:face_left+args.face_size, :] = face
 
         if args.show_name:
@@ -164,11 +160,13 @@ while True:
           cv2.putText(canvas, text, (text_left, text_top), args.font_face, args.font_scale, (10, 10, 10), args.font_thickness)
 
         if args.show_distance:
-          text = str(res['distance']) + " (" + str(len(res2)) + ")"
+          text = str(distances[k]) + " " + str(len(group))
           ((text_width, text_height), retval) = cv2.getTextSize(text, args.font_face, args.font_scale, args.font_thickness)
           assert retval, "Unable to determine text height"
           text_left = int(face_left + args.face_size / 2 - text_width / 2)
           cv2.putText(canvas, text, (text_left, text_top + text_height + 10), args.font_face, args.font_scale, (10, 10, 10), args.font_thickness)
+
+      results = []
 
   # display the canvas
   cv2.imshow('Video', canvas)
