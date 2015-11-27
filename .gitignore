@@ -1,2 +1,4 @@
+*~
 *.pyc
 /vgg_face_caffe
+/vgg_face_caffe.tar.gz
