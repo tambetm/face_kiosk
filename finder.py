@@ -21,5 +21,5 @@ class FaceFinder(object):
     def find_nearest_faces(self, feature_vector):
         dists, classes = self.nn.kneighbors(feature_vector, return_distance=True)
         dists, classes = (dists[0], classes[0])
-        results = [{'file': self.data[n][1], 'distance': dists[i], 'description': self.data[n][2]} for i, n in enumerate(classes)]
+        results = [{'file': self.data[n][1], 'distance': dists[i], 'name': self.data[n][2]} for i, n in enumerate(classes)]
         return results
