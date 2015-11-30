@@ -40,7 +40,7 @@ git clone https://github.com/tambetm/face_kiosk.git
 
 ## How to run
 
-Before you can run the application, you have to download corresponding images, model and index file. If unsure, start with CASIA_lfw_oversample, this model is of reasonable size, runs fast even on CPU and has decent results.
+Before you can run the application, you have to download corresponding images, model and index file. If unsure, start with `CASIA_lfw_oversample.[sh|bat]`, which is of reasonable size, runs fast even on CPU and has decent results.
 
  * `VGG_lfw.[sh|bat]` - LFW dataset using VGG face model. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](http://www.robots.ox.ac.uk/~vgg/software/vgg_face/src/vgg_face_caffe.tar.gz)  [(index)](https://github.com/tambetm/face_kiosk/blob/master/vgg_lfw/vgg_lfw.pkl?raw=true)
  * `VGG_lfw_oversample.sh` - LFW dataset using VGG face model with oversampling. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](http://www.robots.ox.ac.uk/~vgg/software/vgg_face/src/vgg_face_caffe.tar.gz)  [(index)](https://github.com/tambetm/face_kiosk/blob/master/vgg_lfw/vgg_lfw_oversample.pkl?raw=true)
