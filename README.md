@@ -57,7 +57,7 @@ Before you can run the application, you have to download corresponding images, m
  * `lfw.[sh|bat]` - LFW dataset using model trained on LFW extended with WLF. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgTTJSUTNSdmN0aUU)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgUS1wQl9EdVJySnc)
  * `fotis.[sh|bat]` - Fotis dataset using model trained on LFW+WLF+Fotis.  [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgV0tIaVoxUmRsbW8)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgeUZKcnhoSGhTVms)
 
-Download the files and unzip them to respective folders - models in `models` and data in `data`. There is no specific place for images, just unzip where you like and change `--images_path` in script source. Once this is done, run the script.
+Download the files and unzip them to respective folders - images in `images`, models in `models` and data in `data`. If you already have the images, make symlink in images folder that points to the correct place. Once this is done, run the script.
 
 **NB!** By default Windows scripts use CPU and Linux scripts GPU. This was just my setup, you can change it with `--backend` parameter. VGG face model will benefit a lot from GPU.
 
