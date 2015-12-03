@@ -4,11 +4,11 @@ Demo app for testing face recognition models. It captures data from webcam, perf
 
 ## Installation
 
-### Windows
+### Windows prerequisites
 
 In Windows install [Anaconda](https://www.continuum.io/downloads) and then follow instructions for installing [precompiled Caffe](http://thirdeyesqueegee.com/deepdream/2015/07/19/running-googles-deep-dream-on-windows-with-or-without-cuda-the-easy-way/). You can use it either with or without CUDA.
 
-### Ubuntu
+### Ubuntu prerequisites
 
 In Ubuntu first install Caffe:
 ```
@@ -31,29 +31,29 @@ Then install required Python packages:
 sudo apt-get install python-opencv python-numpy python-sklearn
 ```
 
-Finally clone the repository:
+### Application itself
+
+Just clone the repository:
 ```
 git clone https://github.com/tambetm/face_kiosk.git
 ```
 
-**NB!** While repository uses [Git Large File Storage](https://git-lfs.github.com/) to host large model and index files, it is better to perform clone without git-lfs enabled and download required models manually from links below. By default folders contain placeholders for large files, you can replace them with downloaded files.
-
 ## How to run
 
-Before you can run the application, you have to download corresponding images, model and index file. If unsure, start with `CASIA_lfw_oversample.[sh|bat]`, which is of reasonable size, runs fast even on CPU and has decent results.
+Before you can run the application, you have to download corresponding images, model and data files. If unsure, start with `CASIA_lfw_oversample.[sh|bat]`, which is of reasonable size, runs fast even on CPU and has decent results.
 
- * `VGG_lfw.[sh|bat]` - LFW dataset using VGG face model. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](http://www.robots.ox.ac.uk/~vgg/software/vgg_face/src/vgg_face_caffe.tar.gz)  [(index)](https://github.com/tambetm/face_kiosk/blob/master/vgg_lfw/vgg_lfw.pkl?raw=true)
- * `VGG_lfw_oversample.sh` - LFW dataset using VGG face model with oversampling. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](http://www.robots.ox.ac.uk/~vgg/software/vgg_face/src/vgg_face_caffe.tar.gz)  [(index)](https://github.com/tambetm/face_kiosk/blob/master/vgg_lfw/vgg_lfw_oversample.pkl?raw=true)
- * `CASIA_lfw.[sh|bat]` - LFW dataset using model trained on CASIA-WebFace. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](https://github.com/tambetm/face_kiosk/blob/master/CASIA_lfw/CASIA_iter_450000.caffemodel?raw=true)  [(index)](https://github.com/tambetm/face_kiosk/blob/master/CASIA_lfw/lfw_100_all.pkl?raw=true)
- * `CASIA_lfw_oversample.[sh|bat]` - LFW dataset using model trained on CASIA-WebFace with oversampling. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](https://github.com/tambetm/face_kiosk/blob/master/CASIA_lfw/CASIA_iter_450000.caffemodel?raw=true)  [(index)](https://github.com/tambetm/face_kiosk/blob/master/CASIA_lfw/CASIA_lfw_oversample.pkl?raw=true)
- * `CASIA.[sh|bat]` - CASIA-WebFace dataset using model trained on CASIA-WebFace. [(images)](http://www.cbsr.ia.ac.cn/english/CASIA-WebFace-Database.html) [(model)](https://github.com/tambetm/face_kiosk/blob/master/CASIA_lfw/CASIA_iter_450000.caffemodel?raw=true)  [(index)](https://github.com/tambetm/face_kiosk/blob/master/CASIA/CASIA.pkl?raw=true)
- * `CASIA_oversample.[sh|bat]` - CASIA-WebFace dataset using model trained on CASIA-WebFace with oversampling. [(images)](http://www.cbsr.ia.ac.cn/english/CASIA-WebFace-Database.html) [(model)](https://github.com/tambetm/face_kiosk/blob/master/CASIA_lfw/CASIA_iter_450000.caffemodel?raw=true)  [(index)](https://github.com/tambetm/face_kiosk/blob/master/CASIA/CASIA_oversample.pkl?raw=true)
- * `lfw.[sh|bat]` - LFW dataset using model trained on LFW extended with WLF. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](https://github.com/tambetm/face_kiosk/blob/master/lfw/lfw+wlf_iter_130000.caffemodel?raw=true)  [(index)](https://github.com/tambetm/face_kiosk/blob/master/lfw/lfw_all.pkl?raw=true)
- * `fotis.[sh|bat]` - Fotis dataset using model trained on LFW+WLF+Fotis.  [(model)](https://github.com/tambetm/face_kiosk/blob/master/fotis/lfw+wlf+fotis_iter_110000.caffemodel?raw=true)  [(index)](https://github.com/tambetm/face_kiosk/blob/master/fotis/fotis_unlabeled.pkl?raw=true)
+ * `VGG_lfw.[sh|bat]` - LFW dataset using VGG face model. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](http://www.robots.ox.ac.uk/~vgg/software/vgg_face/src/vgg_face_caffe.tar.gz)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgUXpCRXFFMUs4c28)
+ * `VGG_lfw_oversample.sh` - LFW dataset using VGG face model with oversampling. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](http://www.robots.ox.ac.uk/~vgg/software/vgg_face/src/vgg_face_caffe.tar.gz)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgUXpCRXFFMUs4c28)
+ * `CASIA_lfw.[sh|bat]` - LFW dataset using model trained on CASIA-WebFace. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgMVNCYm83T0dyZFk)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgR00wUkd0alBKSFU)
+ * `CASIA_lfw_oversample.[sh|bat]` - LFW dataset using model trained on CASIA-WebFace with oversampling. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgMVNCYm83T0dyZFk)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgR00wUkd0alBKSFU)
+ * `CASIA.[sh|bat]` - CASIA-WebFace dataset using model trained on CASIA-WebFace. [(images)](http://www.cbsr.ia.ac.cn/english/CASIA-WebFace-Database.html) [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgMVNCYm83T0dyZFk)  [(data)](https://github.com/tambetm/face_kiosk/blob/master/CASIA/CASIA.pkl?raw=true)
+ * `CASIA_oversample.[sh|bat]` - CASIA-WebFace dataset using model trained on CASIA-WebFace with oversampling. [(images)](http://www.cbsr.ia.ac.cn/english/CASIA-WebFace-Database.html) [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgMVNCYm83T0dyZFk)  [(data)](https://github.com/tambetm/face_kiosk/blob/master/CASIA/CASIA_oversample.pkl?raw=true)
+ * `lfw.[sh|bat]` - LFW dataset using model trained on LFW extended with WLF. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgTTJSUTNSdmN0aUU)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgUS1wQl9EdVJySnc)
+ * `fotis.[sh|bat]` - Fotis dataset using model trained on LFW+WLF+Fotis.  [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgV0tIaVoxUmRsbW8)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgeUZKcnhoSGhTVms)
 
-Download the files and move them to respective folders, you can overwrite the git-lfs placeholder files. If unsure of the location, check the respective script source. Once this is done, just run the script.
+Download the files and unzip them to respective folders - models in `models` and data in `data`. There is no specific place for images, just unzip where you like and change `--images_path` in script source. Once this is done, run the script.
 
-**NB!** VGG face model must be downloaded separately from [here](http://www.robots.ox.ac.uk/~vgg/software/vgg_face/src/vgg_face_caffe.tar.gz). Unpack the file in application folder, which should result in folder `vgg_face_caffe` containing all the required files. VGG face model will benefit a lot from GPU.
+**NB!** By default Windows scripts use CPU and Linux scripts GPU. This was just my setup, you can change it with `--backend` parameter. VGG face model will benefit a lot from GPU.
 
 ## How to prepare a new dataset
 
@@ -62,7 +62,7 @@ Your dataset should be organized into folders, folder name should be person's na
 Once you have folder structure in place, you can extract features with following command:
 
 ```
-python extract.py <images_path> <features.npz> <metadata.csv> <options>
+python src/extract.py <images_path> <features.npz> <metadata.csv> <options>
 ```
 
 First parameter is path to images folder (which has person subfolders), second parameter is name for features file (saved in Numpy .npz format), third parameter is text file name, that will contain file names and person names (saved in CSV format). 
@@ -81,7 +81,7 @@ Depending on the model you also need to provide additional options:
 See `extract_CASIA_lfw_oversample.sh` for example. Once you have extracted the features in `.npz` file, you need to create index for nearest neighbor search with following command:
 
 ```
-python build_index.py <features.npz> <index.pkl>
+python src/build_index.py <features.npz> <index.pkl>
 ```
 
 Then you need to create a script or batch file for launching the kiosk with proper options. See the example scripts above.
