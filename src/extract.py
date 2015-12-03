@@ -49,7 +49,8 @@ csv_writer = csv.writer(csv_file)
 for i, filename in enumerate(files):
   print i, filename
 
-  image = cv2.imread(os.path.join(args.input_path, filename))
+  image = cv2.imread(filename)
+  assert image is not None, "Error reading image"
   features[i, :] = extractor.get_image_features(image)
 
   relname = os.path.relpath(filename, args.input_path)
