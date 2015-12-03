@@ -8,6 +8,12 @@ Demo app for testing face recognition models. It captures data from webcam, perf
 
 In Windows install [Anaconda](https://www.continuum.io/downloads) and then follow instructions for installing [precompiled Caffe](http://thirdeyesqueegee.com/deepdream/2015/07/19/running-googles-deep-dream-on-windows-with-or-without-cuda-the-easy-way/). You can use it either with or without CUDA.
 
+You also need OpenCV, which isn't included with recent Anaconda. First download .whl file from [here](http://www.lfd.uci.edu/~gohlke/pythonlibs/#opencv). Then install it with pip:
+
+```
+pip install opencv_python‑2.4.12‑cp27‑none‑win_amd64.whl
+```
+
 ### Ubuntu prerequisites
 
 In Ubuntu first install Caffe:
@@ -46,8 +52,8 @@ Before you can run the application, you have to download corresponding images, m
  * `VGG_lfw_oversample.sh` - LFW dataset using VGG face model with oversampling. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](http://www.robots.ox.ac.uk/~vgg/software/vgg_face/src/vgg_face_caffe.tar.gz)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgUXpCRXFFMUs4c28)
  * `CASIA_lfw.[sh|bat]` - LFW dataset using model trained on CASIA-WebFace. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgMVNCYm83T0dyZFk)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgR00wUkd0alBKSFU)
  * `CASIA_lfw_oversample.[sh|bat]` - LFW dataset using model trained on CASIA-WebFace with oversampling. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgMVNCYm83T0dyZFk)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgR00wUkd0alBKSFU)
- * `CASIA.[sh|bat]` - CASIA-WebFace dataset using model trained on CASIA-WebFace. [(images)](http://www.cbsr.ia.ac.cn/english/CASIA-WebFace-Database.html) [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgMVNCYm83T0dyZFk)  [(data)](https://github.com/tambetm/face_kiosk/blob/master/CASIA/CASIA.pkl?raw=true)
- * `CASIA_oversample.[sh|bat]` - CASIA-WebFace dataset using model trained on CASIA-WebFace with oversampling. [(images)](http://www.cbsr.ia.ac.cn/english/CASIA-WebFace-Database.html) [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgMVNCYm83T0dyZFk)  [(data)](https://github.com/tambetm/face_kiosk/blob/master/CASIA/CASIA_oversample.pkl?raw=true)
+ * `CASIA.[sh|bat]` - CASIA-WebFace dataset using model trained on CASIA-WebFace. [(images)](http://www.cbsr.ia.ac.cn/english/CASIA-WebFace-Database.html) [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgMVNCYm83T0dyZFk)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgZ0owTHNBcE5UUjQ)
+ * `CASIA_oversample.[sh|bat]` - CASIA-WebFace dataset using model trained on CASIA-WebFace with oversampling. [(images)](http://www.cbsr.ia.ac.cn/english/CASIA-WebFace-Database.html) [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgMVNCYm83T0dyZFk)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgZ0owTHNBcE5UUjQ)
  * `lfw.[sh|bat]` - LFW dataset using model trained on LFW extended with WLF. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgTTJSUTNSdmN0aUU)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgUS1wQl9EdVJySnc)
  * `fotis.[sh|bat]` - Fotis dataset using model trained on LFW+WLF+Fotis.  [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgV0tIaVoxUmRsbW8)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgeUZKcnhoSGhTVms)
 
