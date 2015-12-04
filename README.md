@@ -50,16 +50,25 @@ Before you can run the application, you have to download corresponding images, m
 
  * `VGG_lfw.[sh|bat]` - LFW dataset using VGG face model. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](http://www.robots.ox.ac.uk/~vgg/software/vgg_face/src/vgg_face_caffe.tar.gz)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgUXpCRXFFMUs4c28)
  * `VGG_lfw_oversample.sh` - LFW dataset using VGG face model with oversampling. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](http://www.robots.ox.ac.uk/~vgg/software/vgg_face/src/vgg_face_caffe.tar.gz)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgUXpCRXFFMUs4c28)
- * `CASIA_lfw.[sh|bat]` - LFW dataset using model trained on CASIA-WebFace. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgMVNCYm83T0dyZFk)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgR00wUkd0alBKSFU)
- * `CASIA_lfw_oversample.[sh|bat]` - LFW dataset using model trained on CASIA-WebFace with oversampling. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgMVNCYm83T0dyZFk)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgR00wUkd0alBKSFU)
+ * `CASIA_lfw.[sh|bat]` - LFW dataset using model trained on CASIA-WebFace. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgMVNCYm83T0dyZFk)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgcl92Z0RZVFF1TFE)
+ * `CASIA_lfw_oversample.[sh|bat]` - LFW dataset using model trained on CASIA-WebFace with oversampling. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgMVNCYm83T0dyZFk)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgcl92Z0RZVFF1TFE)
  * `CASIA.[sh|bat]` - CASIA-WebFace dataset using model trained on CASIA-WebFace. [(images)](http://www.cbsr.ia.ac.cn/english/CASIA-WebFace-Database.html) [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgMVNCYm83T0dyZFk)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgZ0owTHNBcE5UUjQ)
  * `CASIA_oversample.[sh|bat]` - CASIA-WebFace dataset using model trained on CASIA-WebFace with oversampling. [(images)](http://www.cbsr.ia.ac.cn/english/CASIA-WebFace-Database.html) [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgMVNCYm83T0dyZFk)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgZ0owTHNBcE5UUjQ)
  * `lfw.[sh|bat]` - LFW dataset using model trained on LFW extended with WLF. [(images)](http://vis-www.cs.umass.edu/lfw/lfw.tgz) [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgTTJSUTNSdmN0aUU)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgUS1wQl9EdVJySnc)
- * `fotis.[sh|bat]` - Fotis dataset using model trained on LFW+WLF+Fotis.  [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgV0tIaVoxUmRsbW8)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgeUZKcnhoSGhTVms)
+ * `fotis.[sh|bat]` - Fotis dataset using model trained on LFW+WLF+Fotis.  [(model)](https://drive.google.com/open?id=0B0fFJSGDUPcgV0tIaVoxUmRsbW8)  [(data)](https://drive.google.com/open?id=0B0fFJSGDUPcgSUFIaVpDWG5uSXM)
 
 Download the files and unzip them to respective folders - images in `images`, models in `models` and data in `data`. If you already have the images, make symlink in images folder that points to the correct place. Once this is done, run the script.
 
 **NB!** By default Windows scripts use CPU and Linux scripts GPU. This was just my setup, you can change it with `--backend` parameter. VGG face model will benefit a lot from GPU.
+
+### Stability
+
+As outputs of the networks are supposed to be semantical features of the face, I expected them to be quite stable and not change much over different video frames. But that's not the case. I had to use several hacks to make predictions more consistent and they are not yet as stable as I would like them to be. What I'm doing currently:
+ - Find 5 nearest face images for 10 consequtive frames and average distances **per each person**.
+ - Discard persons that occurred in results for less than half frames (number of images <= 5).
+ - For some models I also tried oversampling, i.e. features are averaged over 10 cropped images (4 corners + center + 2 mirrors of each).
+
+You can revert to original output by adding `--average_window 1` and `--group_by file` to command line.
 
 ## How to prepare a new dataset
 
