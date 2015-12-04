@@ -1,6 +1,8 @@
 # Face kiosk
 
-Demo app for testing face recognition models. It captures data from webcam, performs face detection and shows 5 most similar faces.
+Demo app for testing face recognition neural networks. It captures data from webcam, performs face detection and shows 5 most similar faces.
+
+![Angelina Jolie](https://raw.githubusercontent.com/tambetm/face_kiosk/master/images/example.jpg)
 
 ## Installation
 
@@ -64,11 +66,16 @@ Download the files and unzip them to respective folders - images in `images`, mo
 ### Stability
 
 As outputs of the networks are supposed to be semantical features of the face, I expected them to be quite stable and not change much over different video frames. But that's not the case. I had to use several hacks to make predictions more consistent and they are not yet as stable as I would like them to be. What I'm doing currently:
- - Find 5 nearest face images for 10 consequtive frames and average distances **per each person**.
- - Discard persons that occurred in results for less than half frames (number of images <= 5).
+ - For 10 consequtive frames find 5 nearest faces for each.
+ - Group those faces by person's name.
+ - Calculate average distance and number of images for each person.
+ - Discard persons that matched less than half frames (number of images <= 5).
+ - Order remaining persons by average distance.
  - For some models I also tried oversampling, i.e. features are averaged over 10 cropped images (4 corners + center + 2 mirrors of each).
 
-You can revert to original output by adding `--average_window 1` and `--group_by file` to command line.
+You can see the average distance and number of images under person's name.
+
+You can disable all stability hacks by adding `--average_window 1` and `--group_by file` to command line.
 
 ## How to prepare a new dataset
 
