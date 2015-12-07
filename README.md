@@ -69,11 +69,11 @@ As outputs of the networks are supposed to be semantical features of the face, I
  - For 10 consequtive frames find 5 nearest faces for each.
  - Group those faces by person's name.
  - Calculate average distance and number of images for each person.
- - Discard persons that matched less than half frames (number of images <= 5).
+ - Discard persons that matched for less than half frames (number of images <= 5).
  - Order remaining persons by average distance.
- - For some models I also tried oversampling, i.e. features are averaged over 10 cropped images (4 corners + center + 2 mirrors of each).
+ - For some models I also tried oversampling, i.e. features are averaged over 10 cropped subimages (4 corners + center + 2 mirrors of each).
 
-You can see the average distance and number of images under person's name.
+You can see the average distance and number of images under each person's name.
 
 You can disable all stability hacks by adding `--average_window 1` and `--group_by file` to command line.
 
