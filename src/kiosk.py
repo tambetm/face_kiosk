@@ -22,7 +22,7 @@ parser.add_argument("--show_distance", type=int, default=1)
 parser.add_argument("--group_by", choices=["file", "name"], default="name")
 
 parser.add_argument("--image_size", type=int, default=100)
-parser.add_argument("--face_min_size", type=int, default=50)
+parser.add_argument("--face_min_size", type=int, default=100)
 parser.add_argument("--min_neighbors", type=int, default=10)
 parser.add_argument("--enlarge_factor", type=float, default=2.2)
 parser.add_argument("--average_window", type=int, default=10)
@@ -44,8 +44,7 @@ args = parser.parse_args()
 detector = FaceDetector(
     min_size=args.face_min_size, 
     min_neighbors=args.min_neighbors, 
-    enlarge_factor=args.enlarge_factor, 
-    flags=cv2.cv.CV_HAAR_SCALE_IMAGE|cv2.cv.CV_HAAR_FIND_BIGGEST_OBJECT)
+    enlarge_factor=args.enlarge_factor)
 
 # initialize face extractor
 extractor = FaceFeaturesExtractor(
@@ -99,6 +98,9 @@ while True:
   if len(faces) == 0:
     canvas[frame_top:frame_top+frame_height, frame_left:frame_left+frame_width, :] = frame
   else:
+    # order faces by area
+    faces = sorted(faces, key=lambda rect: rect[2]*rect[3], reverse=True)
+
     # draw rectangle around the face
     frame2 = frame.copy()
     (x, y, w, h) = faces[0]
