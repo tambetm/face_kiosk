@@ -1,6 +1,6 @@
 # Face kiosk
 
-Demo app for testing face recognition neural networks. It captures data from webcam, performs face detection and shows 5 most similar faces.
+Demo app for testing face recognition neural networks. It captures data from webcam, performs face detection and shows 5 most similar faces from Labeled Faces in the Wild dataset.
 
 ![Angelina Jolie](https://raw.githubusercontent.com/tambetm/face_kiosk/master/images/example.jpg)
 
@@ -32,6 +32,8 @@ cp Makefile.config.example Makefile.config
 make all
 make test
 make runtest
+# Replace ... with correct path and add to ~/.bashrc
+export PYTHONPATH=/home/.../caffe/python
 ```
 
 Then install required Python packages:
