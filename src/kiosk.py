@@ -12,6 +12,7 @@ parser.add_argument("--capture_device", type=int, default=0)
 parser.add_argument("--delay", type=int, default=1)
 parser.add_argument("--canvas_width", type=int, default=1024)
 parser.add_argument("--canvas_height", type=int, default=768)
+parser.add_argument("--fullscreen", action="store_true")
 parser.add_argument("--face_size", type=int, default=160)
 parser.add_argument("--face_count", type=int, default=5)
 parser.add_argument("--font_face", type=int, default=cv2.FONT_HERSHEY_SIMPLEX)
@@ -83,6 +84,10 @@ assert face_gap > 0, "Lower face size"
 face_top = int(2 * frame_top + frame_height)
 
 text_top = int(face_top + args.face_size + text_height + 5)
+
+if args.fullscreen:
+  cv2.namedWindow("Video", cv2.WND_PROP_FULLSCREEN)
+  cv2.setWindowProperty("Video", cv2.WND_PROP_FULLSCREEN, cv2.cv.CV_WINDOW_FULLSCREEN)
 
 results = []
 n = 0
