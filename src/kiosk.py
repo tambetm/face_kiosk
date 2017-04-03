@@ -12,6 +12,7 @@ parser.add_argument("--capture_device", type=int, default=0)
 parser.add_argument("--delay", type=int, default=1)
 parser.add_argument("--canvas_width", type=int, default=1024)
 parser.add_argument("--canvas_height", type=int, default=768)
+parser.add_argument("--fullscreen", action="store_true")
 parser.add_argument("--face_size", type=int, default=160)
 parser.add_argument("--face_count", type=int, default=5)
 parser.add_argument("--font_face", type=int, default=cv2.FONT_HERSHEY_SIMPLEX)
@@ -25,7 +26,7 @@ parser.add_argument("--image_size", type=int, default=100)
 parser.add_argument("--face_min_size", type=int, default=100)
 parser.add_argument("--min_neighbors", type=int, default=10)
 parser.add_argument("--enlarge_factor", type=float, default=2.2)
-parser.add_argument("--average_window", type=int, default=10)
+parser.add_argument("--average_coef", type=float, default=0.1)
 parser.add_argument("--oversample", type=int, default=0)
 parser.add_argument("--grayscale", type=int, default=1)
 
@@ -84,8 +85,11 @@ face_top = int(2 * frame_top + frame_height)
 
 text_top = int(face_top + args.face_size + text_height + 5)
 
-results = []
-n = 0
+if args.fullscreen:
+  cv2.namedWindow("Video", cv2.WND_PROP_FULLSCREEN)
+  cv2.setWindowProperty("Video", cv2.WND_PROP_FULLSCREEN, cv2.cv.CV_WINDOW_FULLSCREEN)
+
+avg_features = None
 while True:
   # capture frame
   ret, frame = video.read()
@@ -97,78 +101,79 @@ while True:
   # skip following if no faces were found
   if len(faces) == 0:
     canvas[frame_top:frame_top+frame_height, frame_left:frame_left+frame_width, :] = frame
+    avg_features = None
+    results = []
   else:
     # order faces by area
     faces = sorted(faces, key=lambda rect: rect[2]*rect[3], reverse=True)
 
     # draw rectangle around the face
-    frame2 = frame.copy()
+    frame_box = frame.copy()
     (x, y, w, h) = faces[0]
-    cv2.rectangle(frame2, (x, y), (x+w, y+h), (0, 255, 0), 2)
-    canvas[frame_top:frame_top+frame_height, frame_left:frame_left+frame_width, :] = frame2
+    cv2.rectangle(frame_box, (x, y), (x+w, y+h), (0, 255, 0), 2)
+    canvas[frame_top:frame_top+frame_height, frame_left:frame_left+frame_width, :] = frame_box
 
     # extract features of the face
     myface = frame[y:y+h,x:x+w,:]
     features = extractor.get_image_features(myface)
 
+    # perform exponential averaging with previous features
+    if avg_features is None:
+        avg_features = features
+    else:
+        avg_features = (1 - args.average_coef) * avg_features + args.average_coef * features
+
     # find nearest images
-    results += finder.find_nearest_faces(features)
+    results = finder.find_nearest_faces(avg_features)
 
-    # after every average_window steps average predictions
-    n = (n + 1) % args.average_window
-    if n == 0:
-      # create dictionary with list of results in each group
-      groups = dict()
-      for res in results:
-        groups.setdefault(res[args.group_by], []).append(res)
+  # create dictionary with list of results in each group
+  groups = dict()
+  for res in results:
+    groups.setdefault(res[args.group_by], []).append(res)
 
-      # calculate average distance for each group
-      distances = dict()
-      for k, group in groups.iteritems():
-        # only those groups which are present more than half time
-        if len(group) > args.average_window / 2:
-          # calculate average distance
-          distances[k] = float(sum(res['distance'] for res in group) / len(group))
+  # calculate average distance for each group
+  distances = dict()
+  for k, group in groups.iteritems():
+    # calculate average distance
+    distances[k] = float(sum(res['distance'] for res in group) / len(group))
 
-      # order groups by average distance
-      ordered_groups = sorted(distances, key=distances.get)
+  # order groups by average distance
+  ordered_groups = sorted(distances, key=distances.get)
 
-      # keep only face_count top groups (by distance)
-      top_groups = ordered_groups[:args.face_count]
+  # keep only face_count top groups (by distance)
+  top_groups = ordered_groups[:args.face_count]
 
-      # erase previous faces and texts
-      canvas[face_top:].fill(255)
+  # erase previous faces and texts
+  canvas[face_top:].fill(255)
 
-      # loop over top face groups
-      for i, k in enumerate(top_groups):
-        group = groups[k]
-        res = group[0]
+  # loop over top face groups
+  for i, k in enumerate(top_groups):
+    group = groups[k]
+    res = group[0]
 
-        # read the face image
-        filename = os.path.join(args.images_path, res['file'])
-        face = cv2.imread(filename)
-        
-        # draw the face
-        face = cv2.resize(face, (args.face_size, args.face_size))
-        face_left = face_gap + i * (face_gap + args.face_size)
-        canvas[face_top:face_top+args.face_size,face_left:face_left+args.face_size, :] = face
+    # read the face image
+    filename = os.path.join(args.images_path, res['file'])
+    face = cv2.imread(filename)
+    
+    # draw the face
+    face = cv2.resize(face, (args.face_size, args.face_size))
+    face_left = face_gap + i * (face_gap + args.face_size)
+    canvas[face_top:face_top+args.face_size,face_left:face_left+args.face_size, :] = face
 
-        if args.show_name:
-          # draw the text
-          text = res['name']
-          ((text_width, text_height), retval) = cv2.getTextSize(text, args.font_face, args.font_scale, args.font_thickness)
-          assert retval, "Unable to determine text height"
-          text_left = int(face_left + args.face_size / 2 - text_width / 2)
-          cv2.putText(canvas, text, (text_left, text_top), args.font_face, args.font_scale, (10, 10, 10), args.font_thickness)
+    if args.show_name:
+      # draw the text
+      text = res['name']
+      ((text_width, text_height), retval) = cv2.getTextSize(text, args.font_face, args.font_scale, args.font_thickness)
+      assert retval, "Unable to determine text height"
+      text_left = int(face_left + args.face_size / 2 - text_width / 2)
+      cv2.putText(canvas, text, (text_left, text_top), args.font_face, args.font_scale, (10, 10, 10), args.font_thickness)
 
-        if args.show_distance:
-          text = str(distances[k]) + " " + str(len(group))
-          ((text_width, text_height), retval) = cv2.getTextSize(text, args.font_face, args.font_scale, args.font_thickness)
-          assert retval, "Unable to determine text height"
-          text_left = int(face_left + args.face_size / 2 - text_width / 2)
-          cv2.putText(canvas, text, (text_left, text_top + text_height + 10), args.font_face, args.font_scale, (10, 10, 10), args.font_thickness)
-
-      results = []
+    if args.show_distance:
+      text = str(distances[k]) + " " + str(len(group))
+      ((text_width, text_height), retval) = cv2.getTextSize(text, args.font_face, args.font_scale, args.font_thickness)
+      assert retval, "Unable to determine text height"
+      text_left = int(face_left + args.face_size / 2 - text_width / 2)
+      cv2.putText(canvas, text, (text_left, text_top + text_height + 10), args.font_face, args.font_scale, (10, 10, 10), args.font_thickness)
 
   # display the canvas
   cv2.imshow('Video', canvas)
